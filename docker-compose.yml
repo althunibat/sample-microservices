@@ -18,7 +18,7 @@ services:
       - JAEGER_AGENT_HOST=172.17.0.1
       - JAEGER_AGENT_PORT=6831
       - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
-      - SERVICE_TAGS=url-prefix-/customer  strip=/customer
+      - SERVICE_TAGS=urlprefix-/customer  strip=/customer
       - SERVICE_CHECK_HTTP=/hc
       - SERVICE_CHECK_INTERVAL=15s
       - TZ=Asia/Dubai
@@ -41,7 +41,7 @@ services:
       - JAEGER_AGENT_HOST=172.17.0.1
       - JAEGER_AGENT_PORT=6831
       - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
-      - SERVICE_TAGS=url-prefix-/orders  strip=/orders
+      - SERVICE_TAGS=urlprefix-/orders  strip=/orders
       - SERVICE_CHECK_HTTP=/hc
       - SERVICE_CHECK_INTERVAL=15s
       - TZ=Asia/Dubai
@@ -65,7 +65,7 @@ services:
       - JAEGER_AGENT_HOST=172.17.0.1
       - JAEGER_AGENT_PORT=6831
       - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
-      - SERVICE_TAGS=url-prefix-/ui  strip=/ui
+      - SERVICE_TAGS=urlprefix-/ui  strip=/ui
       - SERVICE_CHECK_HTTP=/hc
       - SERVICE_CHECK_INTERVAL=15s
       - TZ=Asia/Dubai
