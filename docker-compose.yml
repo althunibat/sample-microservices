@@ -1,0 +1,71 @@
+version: '3.4'
+
+services:
+  customer-api:
+    image: althunibat/cusomer-api:0.1
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    ports:
+      - target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - ELK_URLS=http://10.10.40.35:9200;http://10.10.40.36:9200;http://10.10.40.37:9200
+      - JAEGER_SERVICE_NAME=customer-api
+      - JAEGER_AGENT_HOST=172.17.0.1
+      - JAEGER_AGENT_PORT=6831
+      - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
+      - SERVICE_TAGS=url-prefix-/customer  strip=/customer
+      - SERVICE_CHECK_HTTP=/hc
+      - SERVICE_CHECK_INTERVAL=15s
+      - TZ=Asia/Dubai
+
+  orders-api:
+    image: althunibat/orders-api:0.1
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    ports:
+      - target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - ELK_URLS=http://10.10.40.35:9200;http://10.10.40.36:9200;http://10.10.40.37:9200
+      - CUSTOMER_SERVICE_URL=http://172.17.0.1:9999/customer/
+      - JAEGER_SERVICE_NAME=orders-api
+      - JAEGER_AGENT_HOST=172.17.0.1
+      - JAEGER_AGENT_PORT=6831
+      - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
+      - SERVICE_TAGS=url-prefix-/orders  strip=/orders
+      - SERVICE_CHECK_HTTP=/hc
+      - SERVICE_CHECK_INTERVAL=15s
+      - TZ=Asia/Dubai
+
+  frontend-web:
+    image: althunibat/front-web:0.1
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+    ports:
+      - target: 80
+        protocol: tcp
+        mode: host
+    environment:
+      - ELK_URLS=http://10.10.40.35:9200;http://10.10.40.36:9200;http://10.10.40.37:9200
+      - CUSTOMER_SERVICE_URL=http://172.17.0.1:9999/customer/
+      - ORDERS_SERVICE_URL=http://172.17.0.1:9999/orders/
+      - JAEGER_SERVICE_NAME=front-web
+      - JAEGER_AGENT_HOST=172.17.0.1
+      - JAEGER_AGENT_PORT=6831
+      - JAEGER_SAMPLER_MANAGER_HOST_PORT=172.17.0.1:5778
+      - SERVICE_TAGS=url-prefix-/ui  strip=/ui
+      - SERVICE_CHECK_HTTP=/hc
+      - SERVICE_CHECK_INTERVAL=15s
+      - TZ=Asia/Dubai
