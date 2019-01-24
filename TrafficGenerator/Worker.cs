@@ -14,10 +14,10 @@ namespace TrafficGenerator
         private readonly IConfiguration _configuration;
         private readonly ILogger<Worker> _logger;
 
-        public Worker(ILogger<Worker> logger, HttpClient client, IConfiguration configuration)
+        public Worker(ILogger<Worker> logger, IHttpClientFactory factory, IConfiguration configuration)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _client = client;
+            _client = factory.CreateClient("client");
             _configuration = configuration;
         }
 

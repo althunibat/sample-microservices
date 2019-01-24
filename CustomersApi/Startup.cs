@@ -43,10 +43,7 @@ namespace CustomersApi
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            var checksBuilder = services.AddHealthChecks()
-                .AddSqlite(":memory:", "SELECT 1;", "sql",
-                    HealthStatus.Degraded,
-                    new[] {"db", "sqlite"});
+            var checksBuilder = services.AddHealthChecks();
             var count = 0;
             foreach (var url in _configuration["ELK_URLS"].Split(";"))
                 checksBuilder.AddElasticsearch(url, $"elk_{++count}");

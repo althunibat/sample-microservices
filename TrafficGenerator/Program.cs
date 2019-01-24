@@ -31,11 +31,11 @@ namespace TrafficGenerator
                 .ConfigureServices((hostContext, services) =>
                 {
                     // Registers and starts Jaeger (see Shared.JaegerServiceCollectionExtensions)
-                    services.AddJaeger();
-                    services.AddHttpClient<IHostedService, Worker>()
+                    services.AddJaeger(hostContext.Configuration);
+                    services.AddHttpClient("client")
                         .AddPolicyHandler(GetRetryPolicy());
                     services.AddOpenTracing();
-                    services.AddSingleton<IHostedService, Worker>();
+                    services.AddHostedService<Worker>();
                 })
                 .UseSerilog();
             await builder.RunConsoleAsync();

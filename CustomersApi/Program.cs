@@ -37,7 +37,7 @@ namespace CustomersApi
                 .ConfigureServices((hostContext, services) =>
                 {
                     // Registers and starts Jaeger (see Shared.JaegerServiceCollectionExtensions)
-                    services.AddJaeger();
+                    services.AddJaeger(hostContext.Configuration);
 
                     // Enables OpenTracing instrumentation for ASP.NET Core, CoreFx, EF Core
                     services.AddOpenTracing();
