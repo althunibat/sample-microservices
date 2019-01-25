@@ -6,7 +6,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Shared;
 
 namespace CustomersApi
 {
@@ -41,7 +41,10 @@ namespace CustomersApi
 
                     options.UseSqlite(connection);
                 });
-
+            // Registers and starts Jaeger (see Shared.JaegerServiceCollectionExtensions)
+            services.AddJaeger(_configuration);
+            // Enables OpenTracing instrumentation for ASP.NET Core, CoreFx, EF Core
+            services.AddOpenTracing();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var checksBuilder = services.AddHealthChecks();
             var count = 0;

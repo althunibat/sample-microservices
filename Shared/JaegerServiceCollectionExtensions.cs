@@ -20,16 +20,27 @@ namespace Shared
             services.AddSingleton(serviceProvider =>
             {
                 var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+                var log = loggerFactory.CreateLogger<Constants>();
                 var service = config["JAEGER_SERVICE_NAME"];
-                int.TryParse(config["JAEGER_AGENT_PORT"] ?? "0", out var port);
-                var tracer = new Tracer.Builder(service)
-                    .WithLoggerFactory(loggerFactory)
-                    .WithSampler(new ConstSampler(true))
-                    .WithReporter(new CompositeReporter(new LoggingReporter(loggerFactory), new RemoteReporter.Builder()
-                        .WithLoggerFactory(loggerFactory)
-                        .WithSender(new UdpSender(config["JAEGER_AGENT_HOST"], port, 0))
-                        .Build()))
-                    .Build();
+                int.TryParse(config["JAEGER_AGENT_PORT"] ?? "6831", out var port);
+                var host = config["JAEGER_AGENT_HOST"];
+                log.LogInformation($"Service: {service}");
+                log.LogInformation($"Agent: {host}:{port}");
+
+                var sampler = new Configuration.SamplerConfiguration(loggerFactory)
+                    .WithType(ConstSampler.Type)
+                    .WithParam(1);
+                var sender = new Configuration.SenderConfiguration(loggerFactory)
+                    .WithAgentHost(host)
+                    .WithAgentPort(port);
+                var reporter =  new Configuration.ReporterConfiguration(loggerFactory)
+                    .WithLogSpans(true)
+                    .WithSender(sender);
+
+                var tracer = new Configuration(service, loggerFactory)
+                    .WithSampler(sampler)
+                    .WithReporter(reporter)
+                    .GetTracer();
                 GlobalTracer.Register(tracer);
                 return tracer;
             });

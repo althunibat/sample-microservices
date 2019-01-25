@@ -31,17 +31,8 @@ namespace OrdersApi
 
                     InitializeLogs(jsonCfg);
                 })
-                .UseDefaultServiceProvider((ctx, opt) => { })
                 .UseStartup<Startup>()
-                .UseSerilog()
-                .ConfigureServices((hostContext, services) =>
-                {
-                    // Registers and starts Jaeger (see Shared.JaegerServiceCollectionExtensions)
-                    services.AddJaeger(hostContext.Configuration);
-
-                    // Enables OpenTracing instrumentation for ASP.NET Core, CoreFx, EF Core
-                    services.AddOpenTracing();
-                });
+                .UseSerilog();
         }
 
         private static void InitializeLogs(IConfiguration config)
@@ -51,8 +42,8 @@ namespace OrdersApi
                 .MinimumLevel.Override("Default", LogEventLevel.Warning)
                 .MinimumLevel.Override("Jaeger.Reporters", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information)
-                .Enrich.FromLogContext();
-            logConfig = logConfig
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(
                     new StaticConnectionPool(config["ELK_URLS"].Split(";").Select(url => new Uri(url)), true,
                         DateTimeProvider.Default)));

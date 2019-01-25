@@ -58,9 +58,8 @@ namespace TrafficGenerator
                 .MinimumLevel.Override("Default", LogEventLevel.Warning)
                 .MinimumLevel.Override("Jaeger.Reporters", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information)
-                .Enrich.FromLogContext();
-            logConfig = logConfig
                 .Enrich.FromLogContext()
+                .WriteTo.Console()
                 .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(
                     new StaticConnectionPool(config["ELK_URLS"].Split(";").Select(url => new Uri(url)), true,
                         DateTimeProvider.Default)));

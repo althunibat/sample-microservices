@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Extensions.Http;
+using Shared;
 
 namespace OrdersApi
 {
@@ -28,6 +29,12 @@ namespace OrdersApi
                 checksBuilder.AddElasticsearch(url, $"elk_{++count}");
             services.AddHttpClient("client")
                 .AddPolicyHandler(GetRetryPolicy());
+            // Registers and starts Jaeger (see Shared.JaegerServiceCollectionExtensions)
+            services.AddJaeger(_configuration);
+
+            // Enables OpenTracing instrumentation for ASP.NET Core, CoreFx, EF Core
+            services.AddOpenTracing();
+
         }
 
         public void Configure(IApplicationBuilder app)
